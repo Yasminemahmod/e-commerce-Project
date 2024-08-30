@@ -1,0 +1,7 @@
+.cat:hover,
+.subCatCard:hover {
+    box-shadow: 0 0 12px 0px #16a34a;
+}
+.img {
+    height: 300px;
+}

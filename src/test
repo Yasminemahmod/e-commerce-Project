@@ -1,0 +1,162 @@
+import React, { useEffect, useState } from 'react'
+import style from './RecentProducts.module.css'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+
+
+export default function RecentProducts() {
+    const [products, setProducts] = useState([])
+
+
+function getProducts() {
+  axios.get(`https://ecommerce.routemisr.com/api/v1/products`)
+  .then(({data}) => {
+    setProducts(data.data)
+  }).catch((error) => error)
+}
+
+useEffect(() => {
+  getProducts()
+}, [])
+console.log(products);
+
+
+
+  return <>
+    <div className="py-10">
+      <form className="max-w-4xl mx-auto mb-10">   
+        <div className="relative">
+            <input type="search" id="default-search" className="block w-full p-2 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search..." />
+        </div>
+      </form>
+      <div className="products grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        {products.map((product) => {<Link to={`/productDetails/${product?.id}`}>
+        <div key={product?.id} className={`${style.product} duration-500 rounded-md px-2`}>
+              <div className="img rounded-md overflow-hidden mt-5">
+                <img src={product?.imageCover} className='w-full' alt={product?.title} />
+              </div>
+              <div className="productdesc pb-7">
+                <p className="cat text-green-600 mb-3">{product?.category.name}</p>
+                <p className="title font-semibold">{product?.title.split(" ").slice(0,2).join(" ")}</p>
+                <div className="desc flex justify-between items-center pt-1 pb-4">
+                  <p className="price">{product?.price} EGP</p>
+                  <div className="rate flex items-center">
+                    <i className="fa-solid fa-star text-yellow-500"></i>
+                    <p className='ms-1'>{product.ratingsAverage}</p>
+                  </div>
+                </div>
+                <div className="favorite relative">
+                  <button className={`${style.btn} duration-500 text-white bg-green-600 hover:bg-green-800 translate-y-36 opacity-0 block w-3/4 mx-auto py-1 rounded-md`}>+ Add</button>
+                  <i className="fa-solid fa-heart absolute top-0 end-2 text-2xl text-gray-800"></i>
+                </div>
+              </div>
+            </div>
+            </Link>
+        })}
+      </div>
+    </div>
+
+  </>
+}
+
+
+
+
+
+// Products.jsx
+import React, { useEffect, useState } from 'react'
+import style from './Products.module.css'
+import RecentProducts from '../RecentProducts/RecentProducts'
+
+
+export default function Products() {
+
+return <>
+    <div className='my-10 container'>
+      <RecentProducts />
+    </div>
+  </>
+}
+
+
+
+
+// Categories Slider
+import React, { useEffect, useRef, useState } from 'react'
+import style from './ProductsSlider.module.css'
+import Slider from "react-slick";
+import axios from 'axios';
+
+
+export default function ProductsSlider() {
+    const [categories, setCategories] = useState([])
+    function catSlider() {
+      axios.get('https://ecommerce.routemisr.com/api/v1/categories')
+      .then(({data}) => {
+        setCategories(data.data)        
+      }).catch((error) => {
+        // console.log(response);
+      })
+    }
+
+    useEffect(() => {
+      catSlider()
+    }, [])
+
+    // console.log(categories);
+
+    let sliderRef = useRef(null);
+    const next = () => {
+      sliderRef.slickNext();
+    };
+    const previous = () => {
+      sliderRef.slickPrev();
+    };
+    
+
+
+    var settings = {
+      dots: false,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 6,
+      slidesToScroll: 1,
+      arrows:false,
+      responsive: [
+        {
+          breakpoint: 965,
+          settings: {
+            slidesToShow: 4,
+          }
+        },
+        {
+          breakpoint: 756,
+          settings: {
+            slidesToShow: 2,
+          }
+        },
+        {
+          breakpoint: 420,
+          settings: {
+            slidesToShow: 1,
+          }
+        },
+      ]
+    };
+
+  return <>
+    <div>
+      <Slider ref={slider => sliderRef = slider} {...settings}>
+          {categories.map((category) => {<div key={category.id} className='mt-20'>
+                <img src={category.image} className='w-full h-64'  alt={category.name} />
+                <p className='title text-gray-900 text-md md:text-xl lg:text-3xl font-semibold'>{category.name}</p>
+              </div>
+          } )}
+      </Slider>
+      <div style={{ textAlign: "center" }}>
+              <button className="button bg-gray-300 rounded-xl px-2 py-1 me-2" onClick={previous}></button>
+              <button className="button bg-gray-300 rounded-xl px-2 py-1" onClick={next}></button>
+      </div>
+    </div>
+  </>
+}

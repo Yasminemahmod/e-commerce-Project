@@ -1,0 +1,24 @@
+.cartCount {
+    font-size: 9px;
+    font-weight: 900;
+    padding: 6px 9px;
+}
+
+@media (max-width: 767px) {
+    .nav {
+        overflow: hidden;
+    }
+    .cont {
+        display: flex;
+        justify-content: space-between;
+    }
+    .out {
+        position: absolute;
+        left: 50%;
+    }
+}
+@media (min-width: 768px) {
+    .navLinks {
+        opacity: 1;
+    }
+}
